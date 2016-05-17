@@ -51,6 +51,30 @@ class Song {
         return songsArray
     }
     
+    func getLyricsFromFileName(fileName:String) -> Dictionary<String,String> {
+       
+       // var lyrics = [String:String]() //Dictionary<String,String>?
+        
+        do {
+            let path = NSBundle.mainBundle().pathForResource("lyrics", ofType: "json")
+            let data: NSData = NSData(contentsOfFile:path!)!
+            
+            print("Data: \(data)")
+            
+            let jsonResult:NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: []) as! NSDictionary
+            
+            print("Json Result:\(jsonResult)")
+            
+            //let results: NSArray = jsonResult.objectAtIndex(0) as! NSArray
+            //print(results)
+            
+        } catch {
+            print("L bro")
+        }
+    return ["yes":"works"]
+}
+    
+    
     func returnURLPath(songString:String) -> NSURL {
         return NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(songString, ofType: "mp3")!)
     }

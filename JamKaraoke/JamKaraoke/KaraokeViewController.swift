@@ -138,7 +138,7 @@ class KaraokeViewController: UIViewController {
     }
     
     func changeLyricsLabel(timeString:String) {
-        print("passed")
+        
         for lyricTime in lyricsTimeDict {
             if timeString == lyricTime.0{
                 lyricsLabel.text = lyricTime.1

@@ -17,6 +17,7 @@
 		780255991CE4CE8E001F99CF /* SongBookTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780255981CE4CE8E001F99CF /* SongBookTableViewController.swift */; };
 		7802559F1CE4D7E1001F99CF /* uptownfunk.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7802559E1CE4D7E1001F99CF /* uptownfunk.mp3 */; };
 		780255A11CE4D862001F99CF /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780255A01CE4D862001F99CF /* Song.swift */; };
+		78844E791CEA61BF0032EBF6 /* lyrics.json in Resources */ = {isa = PBXBuildFile; fileRef = 78844E781CEA61BF0032EBF6 /* lyrics.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		780255981CE4CE8E001F99CF /* SongBookTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBookTableViewController.swift; sourceTree = "<group>"; };
 		7802559E1CE4D7E1001F99CF /* uptownfunk.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = uptownfunk.mp3; sourceTree = "<group>"; };
 		780255A01CE4D862001F99CF /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		78844E781CEA61BF0032EBF6 /* lyrics.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = lyrics.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 				780255821CE4CABA001F99CF /* KaraokeViewController.swift */,
 				780255A01CE4D862001F99CF /* Song.swift */,
 				780255841CE4CABA001F99CF /* Main.storyboard */,
+				78844E781CEA61BF0032EBF6 /* lyrics.json */,
 				780255961CE4CDDD001F99CF /* dontstopbelievinjourney.mp3 */,
 				7802559E1CE4D7E1001F99CF /* uptownfunk.mp3 */,
 				780255951CE4CB36001F99CF /* Supporting Files */,
@@ -149,6 +152,7 @@
 				7802558E1CE4CABA001F99CF /* LaunchScreen.storyboard in Resources */,
 				7802558B1CE4CABA001F99CF /* Assets.xcassets in Resources */,
 				780255971CE4CDDD001F99CF /* dontstopbelievinjourney.mp3 in Resources */,
+				78844E791CEA61BF0032EBF6 /* lyrics.json in Resources */,
 				780255861CE4CABA001F99CF /* Main.storyboard in Resources */,
 				7802559F1CE4D7E1001F99CF /* uptownfunk.mp3 in Resources */,
 			);
@@ -321,6 +325,7 @@
 				780255941CE4CABA001F99CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
