@@ -22,27 +22,27 @@ class Song {
     
     func initializeData() -> [Dictionary<String, AnyObject>]{
         
-        let journeyLyrics: [String:String] = [
-            "00:17":"Just a small town girl living in a lonely world",
-            "00:24": "She took the midnight train going anywhere"
-        ]
-        
-        
-        let brunoLyrics: [String:String] = [
-            "00:20":"This hit, that ice cold",
-            "00:10":"Michele Pfifer, that white gold"
-        ]
+//        let journeyLyrics: [String:String] = [
+//            "00:17":"Just a small town girl living in a lonely world",
+//            "00:24": "She took the midnight train going anywhere"
+//        ]
+//        
+//        
+//        let brunoLyrics: [String:String] = [
+//            "00:20":"This hit, that ice cold",
+//            "00:10":"Michele Pfifer, that white gold"
+//        ]
         
         let dontStopBelievin : [String:AnyObject] = [
             "songName" : String("Don't Stop Believin"),
             "songFile" : returnURLPath("dontstopbelievinjourney"),
-            "songLyrics" :  journeyLyrics
+            "songLyrics" :  getLyricsFromFileName("journeylyrics")
         ]
         
         let uptownFunk : [String: AnyObject] = [
             "songName" : String("Uptown Funk"),
             "songFile" : returnURLPath("uptownfunk"),
-            "songLyrics" : brunoLyrics
+            "songLyrics" : getLyricsFromFileName("journeylyrics")
         ]
     
         songsArray.append(dontStopBelievin)
@@ -51,27 +51,29 @@ class Song {
         return songsArray
     }
     
-    func getLyricsFromFileName(fileName:String) -> Dictionary<String,String> {
+    func getLyricsFromFileName(fileName:String) -> [String:String]{
        
-       // var lyrics = [String:String]() //Dictionary<String,String>?
+        var lyrics = [String:String]() //Dictionary<String,String>?
         
         do {
-            let path = NSBundle.mainBundle().pathForResource("lyrics", ofType: "json")
+            let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json")
             let data: NSData = NSData(contentsOfFile:path!)!
             
             print("Data: \(data)")
             
             let jsonResult:NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: []) as! NSDictionary
             
-            print("Json Result:\(jsonResult)")
+           // print("Json Result:\(jsonResult)")
+            
+            lyrics = jsonResult["lyrics"] as! [String:String]
             
             //let results: NSArray = jsonResult.objectAtIndex(0) as! NSArray
-            //print(results)
+            print(lyrics)
             
         } catch {
             print("L bro")
         }
-    return ["yes":"works"]
+    return lyrics
 }
     
     

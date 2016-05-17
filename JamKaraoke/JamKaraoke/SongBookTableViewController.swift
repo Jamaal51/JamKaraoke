@@ -19,7 +19,7 @@ class SongBookTableViewController: UITableViewController {
         
         title = "Songs!"
         songList = song.initializeData()
-        song.getLyricsFromFileName("test")  
+        //song.getLyricsFromFileName("test")
         
         //songList = song.songsArray
         

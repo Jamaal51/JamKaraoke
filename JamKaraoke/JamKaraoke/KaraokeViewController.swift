@@ -15,7 +15,7 @@ class KaraokeViewController: UIViewController {
     @IBOutlet weak var microphoneImageView: UIImageView!
     @IBOutlet weak var noteImageView1: UIImageView!
     @IBOutlet weak var noteImageView2: UIImageView!
-    @IBOutlet weak var lyricsLabel: UILabel!
+    @IBOutlet weak var lyricsLabel: UILabel?
     
     var timer = NSTimer()
     
@@ -41,16 +41,23 @@ class KaraokeViewController: UIViewController {
         songPath = selectedSong.removeValueForKey("songFile")! as! NSURL
         lyricsTimeDict = selectedSong.removeValueForKey("songLyrics")! as! [String:String]
         
-        lyricsLabel.text = "TEST"
+        lyricsLabel!.text = " "
         
         showAlertController()
         startLiveVideo()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
         
+        print("Memory Warning")
     }
     
     func startLiveVideo(){
         
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera){
+            
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INTERACTIVE.rawValue), 0)){
            
             let captureSession = AVCaptureSession()
             captureSession.sessionPreset = AVCaptureSessionPresetHigh
@@ -59,30 +66,36 @@ class KaraokeViewController: UIViewController {
             
             for device in devices {
                 if(device.position == AVCaptureDevicePosition.Front){
-                    captureDevice = device as? AVCaptureDevice
+                    
+                    self.captureDevice = device as? AVCaptureDevice
                 }
             }
             
             do {
-                let input = try AVCaptureDeviceInput(device: captureDevice)
+                let input = try AVCaptureDeviceInput(device: self.captureDevice)
                 captureSession.addInput(input)
             } catch {
                 print("woops")
             }
-
-            videoLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-            videoLayer.frame = self.view.bounds
             
-            cameraView.layer.addSublayer(videoLayer)
-            self.view.addSubview(cameraView)
-            self.cameraView.addSubview(microphoneImageView)
-            self.cameraView.addSubview(noteImageView1)
-            self.cameraView.addSubview(noteImageView2)
-            self.cameraView.addSubview(lyricsLabel) 
             captureSession.startRunning()
+
+            self.videoLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+            
+            dispatch_async(dispatch_get_main_queue()){ //
+                self.videoLayer.frame = self.view.bounds
+                self.cameraView.layer.addSublayer(self.videoLayer)
+                self.view.addSubview(self.cameraView)
+                self.cameraView.addSubview(self.microphoneImageView)
+                self.cameraView.addSubview(self.noteImageView1)
+                self.cameraView.addSubview(self.noteImageView2)
+                self.cameraView.addSubview(self.lyricsLabel!)
+            }
         }
         
     }
+        
+}
     
     func showAlertController() {
         let alert = UIAlertController()
@@ -141,7 +154,7 @@ class KaraokeViewController: UIViewController {
         
         for lyricTime in lyricsTimeDict {
             if timeString == lyricTime.0{
-                lyricsLabel.text = lyricTime.1
+                lyricsLabel!.text = lyricTime.1
                 lyricsTimeDict.removeValueForKey(lyricTime.0)
             }
         }
