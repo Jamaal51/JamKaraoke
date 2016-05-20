@@ -8,14 +8,15 @@
 
 import UIKit
 import AVFoundation
+import ReplayKit
 
-class KaraokeViewController: UIViewController {
+class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
     
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var microphoneImageView: UIImageView!
     @IBOutlet weak var noteImageView1: UIImageView!
     @IBOutlet weak var noteImageView2: UIImageView!
-    @IBOutlet weak var lyricsLabel: UILabel?
+    @IBOutlet weak var lyricsLabel: UILabel!
     
     var timer = NSTimer()
     
@@ -31,27 +32,70 @@ class KaraokeViewController: UIViewController {
     var captureDevice: AVCaptureDevice?
     var videoLayer = AVCaptureVideoPreviewLayer()
     
-    var songPlayer: AVAudioPlayer!
+    var songPlayer: AVAudioPlayer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        songName = selectedSong.removeValueForKey("songName")! as! String
-        title = String(songName!)
-        songPath = selectedSong.removeValueForKey("songFile")! as! NSURL
-        lyricsTimeDict = selectedSong.removeValueForKey("songLyrics")! as! [String:String]
+        songName = selectedSong.removeValueForKey("songName") as! String
+        title = String(songName)
+        songPath = selectedSong.removeValueForKey("songFile") as! NSURL
+        lyricsTimeDict = selectedSong.removeValueForKey("songLyrics") as! [String:String]
         
         lyricsLabel!.text = " "
+    
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start", style: .Plain, target: self, action: #selector(startRecording))
         
         showAlertController()
         startLiveVideo()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+// MARK: Replay Kit Methods
+    
+    func startRecording() {
         
-        print("Memory Warning")
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INTERACTIVE.rawValue), 0)){
+        
+        let recorder = RPScreenRecorder.sharedRecorder()
+        
+        recorder.startRecordingWithMicrophoneEnabled(true) { [unowned self](error) in
+            if let unwrappedError = error {
+                print(unwrappedError.localizedDescription)
+            } else {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Stop", style: .Plain, target: self, action: #selector(self.stopRecording))
+
+            }
+        }
+        }
+        
     }
+    
+    func stopRecording() {
+        
+        let recorder = RPScreenRecorder.sharedRecorder()
+        
+        recorder.stopRecordingWithHandler { [unowned self] (preview, error) in
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start", style: .Plain, target: self, action: #selector(self.startRecording))
+            
+            if let unwrappedPreview = preview {
+                unwrappedPreview.previewControllerDelegate = self
+                self.presentViewController(unwrappedPreview, animated: true, completion: nil)
+            }
+        }
+        
+    }
+    
+    func previewControllerDidFinish(previewController: RPPreviewViewController) {
+        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func previewController(previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
+        
+        
+    }
+
+    
+// MARK - ImagePicker
     
     func startLiveVideo(){
         
@@ -61,7 +105,7 @@ class KaraokeViewController: UIViewController {
            
             let captureSession = AVCaptureSession()
             captureSession.sessionPreset = AVCaptureSessionPresetHigh
-
+            
             let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
             
             for device in devices {
@@ -98,8 +142,8 @@ class KaraokeViewController: UIViewController {
 }
     
     func showAlertController() {
-        let alert = UIAlertController()
-        alert.addAction(UIAlertAction(title: "Ready To Sing?", style: .Default, handler:(playSong)))
+        let alert = UIAlertController(title: "Ready To Sing?", message: nil, preferredStyle: .ActionSheet)
+        alert.addAction(UIAlertAction(title: "Yes!", style: .Default, handler:(playSong)))
         alert.addAction(UIAlertAction(title: "No", style: .Cancel, handler: (backToList)))
         presentViewController(alert, animated: true, completion: nil)
         
@@ -107,15 +151,17 @@ class KaraokeViewController: UIViewController {
 
     func playSong(alert:UIAlertAction) {
       
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND,0)){
+        
         do{
-            try songPlayer = AVAudioPlayer(contentsOfURL:songPath!)
+            try self.songPlayer = AVAudioPlayer(contentsOfURL:self.songPath!)
         } catch {
             print("Woops")
         }
-        songPlayer.play()
         
-        //songTime = Double(songPlayer.duration)
-        //songTimeTotal = songPlayer.duration
+        self.songPlayer!.play()
+            
+        }
         
         songTimeTotal = 0.0
         
