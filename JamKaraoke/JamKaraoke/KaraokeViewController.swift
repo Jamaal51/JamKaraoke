@@ -10,25 +10,31 @@ import UIKit
 import AVFoundation
 import ReplayKit
 
+enum RecordButton {
+    case Play
+    case Stop
+}
+
 class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
     
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var microphoneImageView: UIImageView!
     @IBOutlet weak var noteImageView1: UIImageView!
     @IBOutlet weak var noteImageView2: UIImageView!
-    @IBOutlet weak var lyricsLabel: UILabel!
+    @IBOutlet weak var lyricsLabel: UILabel?
+    @IBOutlet weak var recordButton: UIButton!
+    @IBOutlet weak var stopAndSaveButton: UIButton!
     
     var timer = NSTimer()
+
     
     var selectedSong: [String:AnyObject]!
     var songName: String!
     var songPath: NSURL!
-    var lyricsArray: [String]!
+    var lyricsArray: [String]?
     var songTime = String()
     var songTimeTotal = NSTimeInterval()
     var lyricsTimeDict = [String:String]()
-
-//    let captureSession = AVCaptureSession()
     var captureDevice: AVCaptureDevice?
     var videoLayer = AVCaptureVideoPreviewLayer()
     
@@ -44,28 +50,60 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         
         lyricsLabel!.text = " "
     
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start", style: .Plain, target: self, action: #selector(startRecording))
-        
-        showAlertController()
+        recordButton.layer.cornerRadius = 30
+        recordButton.layer.backgroundColor = UIColor.redColor().CGColor
+
         startLiveVideo()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        startRecording()
+        
+    }
+    
+    func prepareAudioToPlay(){
+        
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.rawValue), 0)){
+        do{
+            try self.songPlayer = AVAudioPlayer(contentsOfURL:self.songPath!)
+        } catch {
+            print("Woops")
+        }
+        self.songPlayer!.prepareToPlay()
+        
+        self.songPlayer!.play()
+            
+        }
+        startTimer()
     }
     
 // MARK: Replay Kit Methods
     
-    func startRecording() {
+    @IBAction func stopAndSaveTapped(sender: UIButton) {
+    
+    stopRecording()
+    
+    }
+    
+    @IBAction func recordButtonTapped(sender: UIButton) {
+      
+    startRecording()
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INTERACTIVE.rawValue), 0)){
+    }
+    
+    func startRecording() {
         
         let recorder = RPScreenRecorder.sharedRecorder()
         
-        recorder.startRecordingWithMicrophoneEnabled(true) { [unowned self](error) in
+        recorder.startRecordingWithMicrophoneEnabled(true) {(error) in
             if let unwrappedError = error {
                 print(unwrappedError.localizedDescription)
             } else {
-                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Stop", style: .Plain, target: self, action: #selector(self.stopRecording))
-
+                print("called")
+                self.prepareAudioToPlay()
             }
-        }
         }
         
     }
@@ -75,14 +113,13 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         let recorder = RPScreenRecorder.sharedRecorder()
         
         recorder.stopRecordingWithHandler { [unowned self] (preview, error) in
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start", style: .Plain, target: self, action: #selector(self.startRecording))
+            //            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start", style: .Plain, target: self, action: #selector(self.startRecording))
             
             if let unwrappedPreview = preview {
                 unwrappedPreview.previewControllerDelegate = self
                 self.presentViewController(unwrappedPreview, animated: true, completion: nil)
             }
         }
-        
     }
     
     func previewControllerDidFinish(previewController: RPPreviewViewController) {
@@ -90,7 +127,7 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
     }
     
     func previewController(previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
-        
+    
         
     }
 
@@ -101,8 +138,6 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera){
             
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INTERACTIVE.rawValue), 0)){
-           
             let captureSession = AVCaptureSession()
             captureSession.sessionPreset = AVCaptureSessionPresetHigh
             
@@ -126,7 +161,7 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
 
             self.videoLayer = AVCaptureVideoPreviewLayer(session: captureSession)
             
-            dispatch_async(dispatch_get_main_queue()){ //
+            //dispatch_async(dispatch_get_main_queue()){ //
                 self.videoLayer.frame = self.view.bounds
                 self.cameraView.layer.addSublayer(self.videoLayer)
                 self.view.addSubview(self.cameraView)
@@ -134,34 +169,24 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
                 self.cameraView.addSubview(self.noteImageView1)
                 self.cameraView.addSubview(self.noteImageView2)
                 self.cameraView.addSubview(self.lyricsLabel!)
-            }
-        }
+                self.cameraView.addSubview(self.recordButton)
+                self.cameraView.addSubview(self.stopAndSaveButton)
+           // }
+        //}
         
     }
         
 }
     
-    func showAlertController() {
-        let alert = UIAlertController(title: "Ready To Sing?", message: nil, preferredStyle: .ActionSheet)
-        alert.addAction(UIAlertAction(title: "Yes!", style: .Default, handler:(playSong)))
-        alert.addAction(UIAlertAction(title: "No", style: .Cancel, handler: (backToList)))
-        presentViewController(alert, animated: true, completion: nil)
-        
-    }
+//    func showAlertController() {
+//        let alert = UIAlertController(title: "Ready To Sing?", message: nil, preferredStyle: .ActionSheet)
+//        alert.addAction(UIAlertAction(title: "Yes!", style: .Default, handler:(playSong)))
+//        alert.addAction(UIAlertAction(title: "No", style: .Cancel, handler: (backToList)))
+//        presentViewController(alert, animated: true, completion: nil)
+//        
+//    }
 
-    func playSong(alert:UIAlertAction) {
-      
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND,0)){
-        
-        do{
-            try self.songPlayer = AVAudioPlayer(contentsOfURL:self.songPath!)
-        } catch {
-            print("Woops")
-        }
-        
-        self.songPlayer!.play()
-            
-        }
+    func startTimer() {
         
         songTimeTotal = 0.0
         
@@ -178,8 +203,10 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         timer.fire()
     }
     
+    
     func fireTimer(timer:NSTimer){
         let interval: NSTimeInterval = 1
+        
         songTimeTotal += interval
         
         songTime = stringFromTimeInterval(songTimeTotal)
@@ -187,6 +214,7 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         changeLyricsLabel(songTime)
         
         print(songTime)
+        
     }
     
     func stringFromTimeInterval(interval: NSTimeInterval) -> String {

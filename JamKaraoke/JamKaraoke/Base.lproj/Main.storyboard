@@ -102,6 +102,24 @@
                                             </mask>
                                         </variation>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ksT-iE-RNw">
+                                        <rect key="frame" x="417" y="406" width="60" height="60"/>
+                                        <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="0va-fA-03M"/>
+                                            <constraint firstAttribute="height" constant="60" id="Hb7-Jc-KHQ"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="recordButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="chk-ga-98a"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fcK-rb-RZu">
+                                        <rect key="frame" x="405" y="474" width="84" height="30"/>
+                                        <state key="normal" title="Stop &amp; Save"/>
+                                        <connections>
+                                            <action selector="stopAndSaveTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MW5-sF-axo"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -116,7 +134,11 @@
                                     <constraint firstItem="hMb-q2-jhB" firstAttribute="centerX" secondItem="H47-6s-P5z" secondAttribute="centerX" id="UMU-TZ-bz8"/>
                                     <constraint firstItem="CgR-WK-TIk" firstAttribute="top" secondItem="H47-6s-P5z" secondAttribute="top" id="UVc-pN-7OS"/>
                                     <constraint firstItem="hMb-q2-jhB" firstAttribute="top" secondItem="H47-6s-P5z" secondAttribute="top" constant="29" id="XXH-aX-de5"/>
+                                    <constraint firstItem="ksT-iE-RNw" firstAttribute="centerY" secondItem="GA6-pF-9C5" secondAttribute="centerY" id="dKD-3V-TzX"/>
                                     <constraint firstItem="CgR-WK-TIk" firstAttribute="top" secondItem="RMf-Fu-8GF" secondAttribute="top" id="eHJ-3U-hr6"/>
+                                    <constraint firstItem="fcK-rb-RZu" firstAttribute="top" secondItem="ksT-iE-RNw" secondAttribute="bottom" constant="8" id="iUl-ji-dXj"/>
+                                    <constraint firstItem="ksT-iE-RNw" firstAttribute="leading" secondItem="GA6-pF-9C5" secondAttribute="trailing" constant="42" id="iZ1-fB-BqJ"/>
+                                    <constraint firstItem="fcK-rb-RZu" firstAttribute="centerX" secondItem="ksT-iE-RNw" secondAttribute="centerX" id="tOb-Mn-E3P"/>
                                     <constraint firstItem="CgR-WK-TIk" firstAttribute="leading" secondItem="H47-6s-P5z" secondAttribute="leading" id="tOh-Mu-2on"/>
                                     <constraint firstAttribute="trailing" secondItem="RMf-Fu-8GF" secondAttribute="trailing" id="vJY-qW-4gS"/>
                                 </constraints>
@@ -144,6 +166,8 @@
                         <outlet property="microphoneImageView" destination="GA6-pF-9C5" id="3AA-Ro-w8v"/>
                         <outlet property="noteImageView1" destination="CgR-WK-TIk" id="oXT-Y5-icR"/>
                         <outlet property="noteImageView2" destination="RMf-Fu-8GF" id="VS9-G2-6sB"/>
+                        <outlet property="recordButton" destination="ksT-iE-RNw" id="cbE-KA-JtH"/>
+                        <outlet property="stopAndSaveButton" destination="fcK-rb-RZu" id="QXn-P8-wZP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

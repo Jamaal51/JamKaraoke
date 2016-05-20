@@ -59,7 +59,7 @@ class Song {
             let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json")
             let data: NSData = NSData(contentsOfFile:path!)!
             
-            print("Data: \(data)")
+            //print("Data: \(data)")
             
             let jsonResult:NSDictionary = try NSJSONSerialization.JSONObjectWithData(data, options: []) as! NSDictionary
             
@@ -73,6 +73,7 @@ class Song {
         } catch {
             print("L bro")
         }
+        
     return lyrics
 }
     
