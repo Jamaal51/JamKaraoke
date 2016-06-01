@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="4og-G8-UkB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="4og-G8-UkB">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -66,15 +66,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="H47-6s-P5z" userLabel="CameraView">
-                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="486"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="microphone" translatesAutoresizingMaskIntoConstraints="NO" id="GA6-pF-9C5">
-                                        <rect key="frame" x="225" y="336" width="150" height="200"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="200" id="Yma-8j-83K"/>
-                                            <constraint firstAttribute="width" constant="150" id="ra8-Fo-ZoB"/>
-                                        </constraints>
-                                    </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="musicnote1" translatesAutoresizingMaskIntoConstraints="NO" id="CgR-WK-TIk">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="80"/>
                                         <constraints>
@@ -102,24 +95,13 @@
                                             </mask>
                                         </variation>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ksT-iE-RNw">
-                                        <rect key="frame" x="417" y="406" width="60" height="60"/>
-                                        <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="microphone" translatesAutoresizingMaskIntoConstraints="NO" id="GA6-pF-9C5">
+                                        <rect key="frame" x="225" y="286" width="150" height="200"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="60" id="0va-fA-03M"/>
-                                            <constraint firstAttribute="height" constant="60" id="Hb7-Jc-KHQ"/>
+                                            <constraint firstAttribute="height" constant="200" id="Yma-8j-83K"/>
+                                            <constraint firstAttribute="width" constant="150" id="ra8-Fo-ZoB"/>
                                         </constraints>
-                                        <connections>
-                                            <action selector="recordButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="chk-ga-98a"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fcK-rb-RZu">
-                                        <rect key="frame" x="405" y="474" width="84" height="30"/>
-                                        <state key="normal" title="Stop &amp; Save"/>
-                                        <connections>
-                                            <action selector="stopAndSaveTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MW5-sF-axo"/>
-                                        </connections>
-                                    </button>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -134,11 +116,7 @@
                                     <constraint firstItem="hMb-q2-jhB" firstAttribute="centerX" secondItem="H47-6s-P5z" secondAttribute="centerX" id="UMU-TZ-bz8"/>
                                     <constraint firstItem="CgR-WK-TIk" firstAttribute="top" secondItem="H47-6s-P5z" secondAttribute="top" id="UVc-pN-7OS"/>
                                     <constraint firstItem="hMb-q2-jhB" firstAttribute="top" secondItem="H47-6s-P5z" secondAttribute="top" constant="29" id="XXH-aX-de5"/>
-                                    <constraint firstItem="ksT-iE-RNw" firstAttribute="centerY" secondItem="GA6-pF-9C5" secondAttribute="centerY" id="dKD-3V-TzX"/>
                                     <constraint firstItem="CgR-WK-TIk" firstAttribute="top" secondItem="RMf-Fu-8GF" secondAttribute="top" id="eHJ-3U-hr6"/>
-                                    <constraint firstItem="fcK-rb-RZu" firstAttribute="top" secondItem="ksT-iE-RNw" secondAttribute="bottom" constant="8" id="iUl-ji-dXj"/>
-                                    <constraint firstItem="ksT-iE-RNw" firstAttribute="leading" secondItem="GA6-pF-9C5" secondAttribute="trailing" constant="42" id="iZ1-fB-BqJ"/>
-                                    <constraint firstItem="fcK-rb-RZu" firstAttribute="centerX" secondItem="ksT-iE-RNw" secondAttribute="centerX" id="tOb-Mn-E3P"/>
                                     <constraint firstItem="CgR-WK-TIk" firstAttribute="leading" secondItem="H47-6s-P5z" secondAttribute="leading" id="tOh-Mu-2on"/>
                                     <constraint firstAttribute="trailing" secondItem="RMf-Fu-8GF" secondAttribute="trailing" id="vJY-qW-4gS"/>
                                 </constraints>
@@ -155,10 +133,16 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="H47-6s-P5z" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="CaX-St-pWb"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="H47-6s-P5z" secondAttribute="bottom" constant="50" id="Crk-Zd-y5a"/>
                             <constraint firstAttribute="trailing" secondItem="H47-6s-P5z" secondAttribute="trailing" id="g0F-pY-YXA"/>
                             <constraint firstItem="H47-6s-P5z" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="sXu-PW-KCO"/>
                             <constraint firstItem="H47-6s-P5z" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="zHc-2n-czg"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="CaX-St-pWb"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="cameraView" destination="H47-6s-P5z" id="nXi-sP-28g"/>
@@ -166,8 +150,6 @@
                         <outlet property="microphoneImageView" destination="GA6-pF-9C5" id="3AA-Ro-w8v"/>
                         <outlet property="noteImageView1" destination="CgR-WK-TIk" id="oXT-Y5-icR"/>
                         <outlet property="noteImageView2" destination="RMf-Fu-8GF" id="VS9-G2-6sB"/>
-                        <outlet property="recordButton" destination="ksT-iE-RNw" id="cbE-KA-JtH"/>
-                        <outlet property="stopAndSaveButton" destination="fcK-rb-RZu" id="QXn-P8-wZP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

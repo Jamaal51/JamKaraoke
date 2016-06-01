@@ -22,12 +22,9 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
     @IBOutlet weak var noteImageView1: UIImageView!
     @IBOutlet weak var noteImageView2: UIImageView!
     @IBOutlet weak var lyricsLabel: UILabel?
-    @IBOutlet weak var recordButton: UIButton!
     @IBOutlet weak var stopAndSaveButton: UIButton!
     
     var timer = NSTimer()
-
-    
     var selectedSong: [String:AnyObject]!
     var songName: String!
     var songPath: NSURL!
@@ -39,7 +36,7 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
     var videoLayer = AVCaptureVideoPreviewLayer()
     
     var songPlayer: AVAudioPlayer?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,47 +46,45 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         lyricsTimeDict = selectedSong.removeValueForKey("songLyrics") as! [String:String]
         
         lyricsLabel!.text = " "
-    
-        recordButton.layer.cornerRadius = 30
-        recordButton.layer.backgroundColor = UIColor.redColor().CGColor
-
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Save, target: self, action: #selector(stopRecording))
+        
         startLiveVideo()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        startRecording()
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)) {
+            self.startRecording()
+        }
+        
         
     }
     
     func prepareAudioToPlay(){
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.rawValue), 0)){
-        do{
-            try self.songPlayer = AVAudioPlayer(contentsOfURL:self.songPath!)
-        } catch {
-            print("Woops")
-        }
-        self.songPlayer!.prepareToPlay()
-        
-        self.songPlayer!.play()
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0)){
+            do{
+                try self.songPlayer = AVAudioPlayer(contentsOfURL:self.songPath!)
+            } catch {
+                print("Woops")
+            }
+            self.songPlayer!.prepareToPlay()
+            self.songPlayer!.settings
+            
+            self.songPlayer!.play()
+            
             
         }
         startTimer()
     }
     
-// MARK: Replay Kit Methods
+    // MARK: Replay Kit Methods
     
-    @IBAction func stopAndSaveTapped(sender: UIButton) {
-    
-    stopRecording()
-    
-    }
-    
-    @IBAction func recordButtonTapped(sender: UIButton) {
-      
-    startRecording()
+    @IBAction func stopAndSaveTapped(sender: UIBarButtonItem) {
+        
+        stopRecording()
         
     }
     
@@ -103,6 +98,7 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
             } else {
                 print("called")
                 self.prepareAudioToPlay()
+                //print(recorder.microphoneEnabled.boolValue)
             }
         }
         
@@ -113,89 +109,92 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
         let recorder = RPScreenRecorder.sharedRecorder()
         
         recorder.stopRecordingWithHandler { [unowned self] (preview, error) in
-            //            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start", style: .Plain, target: self, action: #selector(self.startRecording))
-            
-            if let unwrappedPreview = preview {
-                unwrappedPreview.previewControllerDelegate = self
-                self.presentViewController(unwrappedPreview, animated: true, completion: nil)
+            if let previewView = preview {
+                previewView.previewControllerDelegate = self
+                self.presentViewController(previewView, animated: true, completion: nil)
             }
         }
     }
     
     func previewControllerDidFinish(previewController: RPPreviewViewController) {
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        navigationController?.dismissViewControllerAnimated(true, completion: {
+            self.navigationController?.popToRootViewControllerAnimated(true)
+        })
     }
     
-    func previewController(previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
+//    func previewController(previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
+//        navigationController?.dismissViewControllerAnimated(true, completion: {
+//            self.navigationController?.popToRootViewControllerAnimated(true)
+//        })
+//    }
     
-        
-    }
-
     
-// MARK - ImagePicker
+    // MARK - ImagePicker
     
     func startLiveVideo(){
         
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera){
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)) {
             
-            let captureSession = AVCaptureSession()
-            captureSession.sessionPreset = AVCaptureSessionPresetHigh
-            
-            let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-            
-            for device in devices {
-                if(device.position == AVCaptureDevicePosition.Front){
-                    
-                    self.captureDevice = device as? AVCaptureDevice
+            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera){
+                
+                let captureSession = AVCaptureSession()
+                captureSession.sessionPreset = AVCaptureSessionPresetiFrame960x540
+                
+                let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
+                let deviceAudio = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeAudio)
+                
+                for device in devices {
+                    if(device.position == AVCaptureDevicePosition.Front){
+                        self.captureDevice = device as? AVCaptureDevice
+                    }
+                }
+                
+                
+                do {
+                    let input = try AVCaptureDeviceInput(device: self.captureDevice)
+                    captureSession.addInput(input)
+                
+                } catch {
+                    print("woops no Video")
+                }
+                
+                do {
+                    let input = try AVCaptureDeviceInput(device: deviceAudio)
+                    captureSession.addInput(input)
+                } catch {
+                    print("woops no Audio")
+                }
+                
+                captureSession.startRunning()
+                
+                self.videoLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+                
+                dispatch_async(dispatch_get_main_queue()){
+                    self.videoLayer.frame = self.view.bounds
+                    self.cameraView.clipsToBounds = true
+                    self.cameraView.layer.addSublayer(self.videoLayer)
+                    self.view.addSubview(self.cameraView)
+                    self.cameraView.addSubview(self.microphoneImageView)
+                    self.cameraView.addSubview(self.noteImageView1)
+                    self.cameraView.addSubview(self.noteImageView2)
+                    self.cameraView.addSubview(self.lyricsLabel!)
                 }
             }
             
-            do {
-                let input = try AVCaptureDeviceInput(device: self.captureDevice)
-                captureSession.addInput(input)
-            } catch {
-                print("woops")
-            }
-            
-            captureSession.startRunning()
-
-            self.videoLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-            
-            //dispatch_async(dispatch_get_main_queue()){ //
-                self.videoLayer.frame = self.view.bounds
-                self.cameraView.layer.addSublayer(self.videoLayer)
-                self.view.addSubview(self.cameraView)
-                self.cameraView.addSubview(self.microphoneImageView)
-                self.cameraView.addSubview(self.noteImageView1)
-                self.cameraView.addSubview(self.noteImageView2)
-                self.cameraView.addSubview(self.lyricsLabel!)
-                self.cameraView.addSubview(self.recordButton)
-                self.cameraView.addSubview(self.stopAndSaveButton)
-           // }
-        //}
+        }
         
     }
-        
-}
     
-//    func showAlertController() {
-//        let alert = UIAlertController(title: "Ready To Sing?", message: nil, preferredStyle: .ActionSheet)
-//        alert.addAction(UIAlertAction(title: "Yes!", style: .Default, handler:(playSong)))
-//        alert.addAction(UIAlertAction(title: "No", style: .Cancel, handler: (backToList)))
-//        presentViewController(alert, animated: true, completion: nil)
-//        
-//    }
-
     func startTimer() {
         
         songTimeTotal = 0.0
         
         timer = NSTimer(
             timeInterval: 1,
-                  target: self,
-                  selector: #selector(fireTimer),
-                userInfo: nil,
-                 repeats: true
+            target: self,
+            selector: #selector(fireTimer),
+            userInfo: nil,
+            repeats: true
         )
         
         NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
@@ -236,13 +235,33 @@ class KaraokeViewController: UIViewController, RPPreviewViewControllerDelegate{
     
     func backToList(alert:UIAlertAction) {
         songPlayer?.stop()
-        navigationController?.popToRootViewControllerAnimated(true)
+        
+        let recording = RPScreenRecorder.sharedRecorder()
+        
+        recording.stopRecordingWithHandler { (preview, error) in
+            recording.discardRecordingWithHandler({ 
+                self.navigationController?.popToRootViewControllerAnimated(true)
+                print("called stop and discard")
+            })
+        }
+        
+        //navigationController?.popToRootViewControllerAnimated(true)
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         songPlayer?.stop()
         timer.invalidate()
+        
+        let recording = RPScreenRecorder.sharedRecorder()
+        
+        recording.stopRecordingWithHandler { (preview, error) in
+            recording.discardRecordingWithHandler({
+                print("called stop and discard")
+            })
+        }
+
+        
     }
 }
 
